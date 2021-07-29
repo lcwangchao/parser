@@ -941,6 +941,25 @@ const (
 	TemporaryLocal
 )
 
+// CreateRPSGameStmt is a statement to create a rock-paper-scissors game.
+type CreateRPSGameStmt struct {
+	ddlNode
+	Name model.CIStr
+}
+
+// Restore implements Node interface.
+func (n *CreateRPSGameStmt) Restore(ctx *format.RestoreCtx) error {
+	ctx.WriteKeyWord("CREATE RPS GAME ")
+	ctx.WriteName(n.Name.String())
+	return nil
+}
+
+// Accept implements Node Accept interface.
+func (n *CreateRPSGameStmt) Accept(v Visitor) (Node, bool) {
+	newNode, _ := v.Enter(n)
+	return v.Leave(newNode)
+}
+
 // CreateTableStmt is a statement to create a table.
 // See https://dev.mysql.com/doc/refman/5.7/en/create-table.html
 type CreateTableStmt struct {
