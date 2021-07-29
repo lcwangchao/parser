@@ -704,6 +704,7 @@ import (
 	dependency                 "DEPENDENCY"
 	depth                      "DEPTH"
 	drainer                    "DRAINER"
+	game                       "GAME"
 	jobs                       "JOBS"
 	job                        "JOB"
 	nodeID                     "NODE_ID"
@@ -724,6 +725,7 @@ import (
 	tidb                       "TIDB"
 	tiFlash                    "TIFLASH"
 	topn                       "TOPN"
+	rpsKwd                     "RPS"
 	split                      "SPLIT"
 	width                      "WIDTH"
 	reset                      "RESET"
@@ -836,6 +838,7 @@ import (
 	BRIEStmt               "BACKUP or RESTORE statement"
 	CommitStmt             "COMMIT statement"
 	CreateTableStmt        "CREATE TABLE statement"
+	CreateRPSGameStmt      "CREATE RPS GAME statement"
 	CreateViewStmt         "CREATE VIEW  statement"
 	CreateUserStmt         "CREATE User statement"
 	CreateRoleStmt         "CREATE Role statement"
@@ -3608,6 +3611,17 @@ DatabaseOptionList:
 		$$ = append($1.([]*ast.DatabaseOption), $2.(*ast.DatabaseOption))
 	}
 
+// Create rock-paper-scissors Game Statement
+// Example: CREATE RPS GAME game1
+CreateRPSGameStmt:
+	"CREATE" "RPS" "GAME" Identifier
+	{
+		stmt := &ast.CreateRPSGameStmt{
+			Name: model.NewCIStr($4),
+		}
+		$$ = stmt
+	}
+
 /*******************************************************************
  *
  *  Create Table Statement
@@ -5922,11 +5936,13 @@ TiDBKeyword:
 |	"DEPENDENCY"
 |	"DEPTH"
 |	"DRAINER"
+|	"GAME"
 |	"JOBS"
 |	"JOB"
 |	"NODE_ID"
 |	"NODE_STATE"
 |	"PUMP"
+|	"RPS"
 |	"SAMPLES"
 |	"STATISTICS"
 |	"STATS"
@@ -9940,6 +9956,13 @@ ShowStmt:
 		}
 		$$ = stmt
 	}
+|	"SHOW" "CREATE" "RPS" "GAME" Identifier
+	{
+		$$ = &ast.ShowStmt{
+			Tp:       ast.ShowCreateRPSGame,
+			GameName: model.NewCIStr($5),
+		}
+	}
 |	"SHOW" "CREATE" "TABLE" TableName
 	{
 		$$ = &ast.ShowStmt{
@@ -10574,6 +10597,7 @@ Statement:
 |	CreateDatabaseStmt
 |	CreateImportStmt
 |	CreateIndexStmt
+|	CreateRPSGameStmt
 |	CreateTableStmt
 |	CreateViewStmt
 |	CreateUserStmt
@@ -13205,7 +13229,7 @@ RowStmt:
 /********************************************************************
  *
  * Plan Recreator Statement
- * 
+ *
  * PLAN RECREATOR
  * 		[DUMP EXPLAIN
  *			[ANALYZE]

@@ -2528,6 +2528,7 @@ const (
 	ShowRestores
 	ShowImports
 	ShowCreateImport
+	ShowCreateRPSGame
 )
 
 const (
@@ -2550,6 +2551,7 @@ type ShowStmt struct {
 
 	Tp          ShowStmtType // Databases/Tables/Columns/....
 	DBName      string
+	GameName    model.CIStr
 	Table       *TableName  // Used for showing columns.
 	Column      *ColumnName // Used for `desc table column`.
 	IndexName   model.CIStr
@@ -2608,6 +2610,9 @@ func (n *ShowStmt) Restore(ctx *format.RestoreCtx) error {
 
 	ctx.WriteKeyWord("SHOW ")
 	switch n.Tp {
+	case ShowCreateRPSGame:
+		ctx.WriteKeyWord("CREATE RPS GAME ")
+		ctx.WriteName(n.GameName.String())
 	case ShowCreateTable:
 		ctx.WriteKeyWord("CREATE TABLE ")
 		if err := n.Table.Restore(ctx); err != nil {
