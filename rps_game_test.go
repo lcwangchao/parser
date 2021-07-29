@@ -17,12 +17,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pingcap/parser/format"
-
+	. "github.com/pingcap/check"
 	"github.com/pingcap/parser"
 	"github.com/pingcap/parser/ast"
-
-	. "github.com/pingcap/check"
+	"github.com/pingcap/parser/format"
 )
 
 func TestRPSGame(t *testing.T) {
