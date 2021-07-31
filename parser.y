@@ -10232,6 +10232,12 @@ ShowTargetFilterable:
 			DBName: $3,
 		}
 	}
+|	"RPS" "GAME" "STATUS"
+	{
+		$$ = &ast.ShowStmt{
+			Tp: ast.ShowRPSGameStatus,
+		}
+	}
 |	ShowIndexKwd FromOrIn TableName
 	{
 		$$ = &ast.ShowStmt{
