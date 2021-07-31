@@ -2529,6 +2529,7 @@ const (
 	ShowImports
 	ShowCreateImport
 	ShowCreateRPSGame
+	ShowRPSGameStatus
 )
 
 const (
@@ -2754,6 +2755,8 @@ func (n *ShowStmt) Restore(ctx *format.RestoreCtx) error {
 			ctx.WriteKeyWord("DATABASES")
 		case ShowCharset:
 			ctx.WriteKeyWord("CHARSET")
+		case ShowRPSGameStatus:
+			ctx.WriteKeyWord("RPS GAME STATUS")
 		case ShowTables:
 			restoreOptFull()
 			ctx.WriteKeyWord("TABLES")
