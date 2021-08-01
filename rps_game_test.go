@@ -76,3 +76,30 @@ func (s *testParserSuite) TestShowCreateRPSGameStatus(c *C) {
 	c.Assert(stmt.Tp, Equals, ast.ShowStmtType(ast.ShowRPSGameStatus))
 	assertRestore(c, stmt, "SHOW RPS GAME STATUS LIKE `game1`")
 }
+
+func (s *testParserSuite) TestActionRPSGame(c *C) {
+	p := parser.New()
+	n, err := p.ParseOneStmt("ACTION RPS GAME game1 SHOW ROCK", "", "")
+	c.Assert(err, IsNil)
+	stmt, ok := n.(*ast.ActionRPSGameStmt)
+	c.Assert(ok, IsTrue)
+	c.Assert(stmt.Game.O, Equals, "game1")
+	c.Assert(stmt.Action, Equals, ast.RPSGameActionShowRock)
+	assertRestore(c, stmt, "ACTION RPS GAME `game1` SHOW ROCK")
+
+	n, err = p.ParseOneStmt("ACTION RPS GAME game1 SHOW PAPER", "", "")
+	c.Assert(err, IsNil)
+	stmt, ok = n.(*ast.ActionRPSGameStmt)
+	c.Assert(ok, IsTrue)
+	c.Assert(stmt.Game.O, Equals, "game1")
+	c.Assert(stmt.Action, Equals, ast.RPSGameActionShowPaper)
+	assertRestore(c, stmt, "ACTION RPS GAME `game1` SHOW PAPER")
+
+	n, err = p.ParseOneStmt("ACTION RPS GAME game1 SHOW SCISSORS", "", "")
+	c.Assert(err, IsNil)
+	stmt, ok = n.(*ast.ActionRPSGameStmt)
+	c.Assert(ok, IsTrue)
+	c.Assert(stmt.Game.O, Equals, "game1")
+	c.Assert(stmt.Action, Equals, ast.RPSGameActionShowScissors)
+	assertRestore(c, stmt, "ACTION RPS GAME `game1` SHOW SCISSORS")
+}

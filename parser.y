@@ -710,9 +710,12 @@ import (
 	nodeID                     "NODE_ID"
 	nodeState                  "NODE_STATE"
 	optimistic                 "OPTIMISTIC"
+	paper                      "PAPER"
 	pessimistic                "PESSIMISTIC"
 	pump                       "PUMP"
+	rock                       "ROCK"
 	samples                    "SAMPLES"
+	scissors                   "SCISSORS"
 	statistics                 "STATISTICS"
 	stats                      "STATS"
 	statsMeta                  "STATS_META"
@@ -825,6 +828,7 @@ import (
 	ProcedureCall          "Procedure call with Identifier or identifier"
 
 %type	<statement>
+	ActionRPSGameStmt      "Action a RPS Game"
 	AdminStmt              "Check table statement or show ddl statement"
 	AlterDatabaseStmt      "Alter database statement"
 	AlterTableStmt         "Alter table statement"
@@ -1056,6 +1060,7 @@ import (
 	DuplicateOpt                           "[IGNORE|REPLACE] in CREATE TABLE ... SELECT statement or LOAD DATA statement"
 	OptErrors                              "ERRORS or empty"
 	OptFull                                "Full or empty"
+	OptRPSGameAction                       "ROCK/PAPER/SCISSORS"
 	OptTemporary                           "TEMPORARY or empty"
 	OptOrder                               "Optional ordering keyword: ASC/DESC. Default to ASC"
 	Order                                  "Ordering keyword: ASC or DESC"
@@ -3622,6 +3627,32 @@ CreateRPSGameStmt:
 		$$ = stmt
 	}
 
+// Actions of rock-paper-scissors Game
+OptRPSGameAction:
+	"SHOW" "ROCK"
+	{
+		$$ = ast.RPSGameActionShowRock
+	}
+|	"SHOW" "PAPER"
+	{
+		$$ = ast.RPSGameActionShowPaper
+	}
+|	"SHOW" "SCISSORS"
+	{
+		$$ = ast.RPSGameActionShowScissors
+	}
+
+// Action rock-paper-scissors Game Statement
+ActionRPSGameStmt:
+	"ACTION" "RPS" "GAME" Identifier OptRPSGameAction
+	{
+		stmt := &ast.ActionRPSGameStmt{
+			Game:   model.NewCIStr($4),
+			Action: $5.(ast.RPSGameAction),
+		}
+		$$ = stmt
+	}
+
 /*******************************************************************
  *
  *  Create Table Statement
@@ -5941,9 +5972,12 @@ TiDBKeyword:
 |	"JOB"
 |	"NODE_ID"
 |	"NODE_STATE"
+|	"PAPER"
 |	"PUMP"
+|	"ROCK"
 |	"RPS"
 |	"SAMPLES"
+|	"SCISSORS"
 |	"STATISTICS"
 |	"STATS"
 |	"STATS_META"
@@ -10583,6 +10617,7 @@ WithReadLockOpt:
 
 Statement:
 	EmptyStmt
+|	ActionRPSGameStmt
 |	AdminStmt
 |	AlterDatabaseStmt
 |	AlterTableStmt
