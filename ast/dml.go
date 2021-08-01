@@ -33,6 +33,7 @@ var (
 	_ DMLNode = &ShowStmt{}
 	_ DMLNode = &LoadDataStmt{}
 	_ DMLNode = &SplitRegionStmt{}
+	_ DMLNode = &ActionRPSGameStmt{}
 
 	_ Node = &Assignment{}
 	_ Node = &ByItem{}
@@ -3404,4 +3405,47 @@ func (n *AsOfClause) Accept(v Visitor) (Node, bool) {
 	}
 	n.TsExpr = node.(ExprNode)
 	return v.Leave(n)
+}
+
+// RPSGameAction is the action for the RPS Game
+type RPSGameAction int
+
+const (
+	// RPSGameActionShowRock shows a rock
+	RPSGameActionShowRock RPSGameAction = iota
+	// RPSGameActionShowPaper shows a paper
+	RPSGameActionShowPaper
+	// RPSGameActionShowScissors shows scissors
+	RPSGameActionShowScissors
+)
+
+// ActionRPSGameStmt is a statement to do some action for a rps game
+type ActionRPSGameStmt struct {
+	dmlNode
+
+	Game   model.CIStr
+	Action RPSGameAction
+}
+
+// Restore implements Node interface.
+func (n *ActionRPSGameStmt) Restore(ctx *format.RestoreCtx) error {
+	ctx.WriteKeyWord("ACTION RPS GAME ")
+	ctx.WriteName(n.Game.String())
+	switch n.Action {
+	case RPSGameActionShowRock:
+		ctx.WriteKeyWord(" SHOW ROCK")
+	case RPSGameActionShowPaper:
+		ctx.WriteKeyWord(" SHOW PAPER")
+	case RPSGameActionShowScissors:
+		ctx.WriteKeyWord(" SHOW SCISSORS")
+	default: // Prevent accidents
+		return errors.New("ActionRPSGameStmt has an error while matching")
+	}
+	return nil
+}
+
+// Accept implements Node Accept interface.
+func (n *ActionRPSGameStmt) Accept(v Visitor) (Node, bool) {
+	newNode, _ := v.Enter(n)
+	return v.Leave(newNode.(*ActionRPSGameStmt))
 }
