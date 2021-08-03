@@ -1106,3 +1106,23 @@ type TableColumnID struct {
 	TableID  int64
 	ColumnID int64
 }
+
+// RPSGameInfo provides meta data describing a RPS game.
+type RPSGameInfo struct {
+	ID         int64       `json:"id"`
+	Name       CIStr       `json:"name"`
+	TotalRound int         `json:"totalRound"`
+	State      SchemaState `json:"state"`
+}
+
+// Clone clones RPSGameInfo.
+func (g *RPSGameInfo) Clone() *RPSGameInfo {
+	newInfo := *g
+	return &newInfo
+}
+
+// Copy shallow copies RPSGameInfo.
+func (g *RPSGameInfo) Copy() *RPSGameInfo {
+	newInfo := *g
+	return &newInfo
+}

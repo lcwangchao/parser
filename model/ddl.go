@@ -81,6 +81,7 @@ const (
 	ActionDropIndexes                   ActionType = 48
 	ActionAlterTableAttributes          ActionType = 49
 	ActionAlterTablePartitionAttributes ActionType = 50
+	ActionCreateRPSGame                 ActionType = 51
 )
 
 var actionMap = map[ActionType]string{
@@ -133,6 +134,7 @@ var actionMap = map[ActionType]string{
 	ActionDropIndexes:                   "drop multi-indexes",
 	ActionAlterTableAttributes:          "alter table attributes",
 	ActionAlterTablePartitionAttributes: "alter table partition attributes",
+	ActionCreateRPSGame:                 "create rps game",
 }
 
 // String return current ddl action in string
@@ -196,6 +198,7 @@ type Job struct {
 	Type       ActionType    `json:"type"`
 	SchemaID   int64         `json:"schema_id"`
 	TableID    int64         `json:"table_id"`
+	GameID     int64         `json:"game_id"`
 	SchemaName string        `json:"schema_name"`
 	State      JobState      `json:"state"`
 	Error      *terror.Error `json:"err"`
@@ -469,6 +472,7 @@ type SchemaDiff struct {
 	Type     ActionType `json:"type"`
 	SchemaID int64      `json:"schema_id"`
 	TableID  int64      `json:"table_id"`
+	GameID   int64      `json:"game_id"`
 
 	// OldTableID is the table ID before truncate, only used by truncate table DDL.
 	OldTableID int64 `json:"old_table_id"`
